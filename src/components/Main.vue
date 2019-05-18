@@ -61,9 +61,28 @@
           </div>
         </div>
       </div>
-      <div class="graph border border-secondary ">
-        <canvas id="currencyChart" class="border  border-primary"></canvas>
-        <p class="text-center m-2">Historical Exchange Chart</p>
+      <div class="row">
+        <div class="col-11">
+          <div class="graph border border-secondary ">
+            
+            <canvas id="currencyChart" class="border  border-primary">
+            </canvas>
+            
+            <p class="text-center m-2">Historical Exchange Chart</p>
+          </div>
+        </div>
+        <div class="col">
+          <div class="btn-group-vertical float-right" role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-secondary mb-4 mr-2">12h</button>
+            <button type="button" class="btn btn-secondary mb-4">1D</button>
+            <button type="button" class="btn btn-secondary mb-4">1W</button>
+            <button type="button" class="btn btn-secondary mb-4">1M</button>
+            <button type="button" class="btn btn-secondary mb-4">1Y</button>
+            <button type="button" class="btn btn-secondary mb-4">2Y</button>
+            <button type="button" class="btn btn-secondary mb-4">5Y</button>
+            <button type="button" class="btn btn-secondary mb-4">10Y</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -103,22 +122,26 @@ export default {
       $('#selectTo').selectpicker('refresh');
     },
     fetchCurrentCurrencyRate() {
-      fetch(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${this.pickedCurrencyFrom}&to_currency=${this.pickedCurrencyTo}&apikey=L9P96TFKML5W3CYA`)
-        .then(response => response.json())
-        .then(json => this.realTimeExchangeRate = (json['Realtime Currency Exchange Rate']['5. Exchange Rate']))
-        .catch(err => console.log(`Error with your api call ${err}`));
+      // fetch(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${this.pickedCurrencyFrom}&to_currency=${this.pickedCurrencyTo}&apikey=L9P96TFKML5W3CYA`)
+      //   .then(response => response.json())
+      //   .then(json => this.realTimeExchangeRate = (json['Realtime Currency Exchange Rate']['5. Exchange Rate']))
+      //   .catch(err => console.log(`Error with your api call ${err}`));
     },
   },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+
 <style scoped>
 .bigFont {
   font-size: 1em;
 }
 canvas {
-  width: 100%;
+  width: 93.3%;
   height: auto;
+}
+.right {
+  position: absolute;
+  right: 0em;
 }
 </style>
