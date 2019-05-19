@@ -114,8 +114,8 @@ export default {
     };
   },
   mounted() {
-    this.getSampleGraph();
-    this.fetchCurrentCurrencyRate();
+    //this.getSampleGraph();
+    //this.fetchCurrentCurrencyRate();
   },
   methods: {
     handleChange(e) {

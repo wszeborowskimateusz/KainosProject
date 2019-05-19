@@ -11,6 +11,11 @@ describe('Main', () => {
 
   it('should render the title correctly', () => {
     const wrapper = mount(Main);
-    wrapper.vm.swapCurrencies();
+    wrapper.setData({
+        areTrendLinesShown: false,
+    });
+    let checkbox = wrapper.find('input[type="checkbox"]');
+    console.log(checkbox);
+    expect(checkbox).not.toHaveProperty('checked');
   });
 });
