@@ -61,24 +61,31 @@
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-11">
-          <div class="graph border border-secondary ">
+      <div class="row m-0 no-gutters">
+        <div class="col-11 mb-3 mr-0 p-0">
+          <div class="graph">
             <canvas id="currencyChart" class="border  border-primary">
             </canvas>
-            <p class="text-center m-2">Historical Exchange Chart</p>
           </div>
         </div>
         <div class="col">
           <div class="btn-group-vertical float-right" role="group" aria-label="Basic example">
-            <button type="button" class="btn btn-outline-primary mb-4 mr-2">12h</button>
-            <button type="button" class="btn btn-outline-primary mb-4">1D</button>
-            <button type="button" class="btn btn-outline-primary mb-4">1W</button>
-            <button type="button" class="btn btn-outline-primary mb-4">1M</button>
-            <button type="button" class="btn btn-outline-primary mb-4">1Y</button>
-            <button type="button" class="btn btn-outline-primary mb-4">2Y</button>
-            <button type="button" class="btn btn-outline-primary mb-4">5Y</button>
-            <button type="button" class="btn btn-outline-primary mb-4">10Y</button>
+            <button type="button" v-on:click='getCurrencyGraph("12h")'
+                class="btn btn-outline-primary mb-4 mr-4">12h</button>
+            <button type="button" v-on:click='getCurrencyGraph("1D")'
+                class="btn btn-outline-primary mb-4">1D</button>
+            <button type="button" v-on:click='getCurrencyGraph("1W")'
+                class="btn btn-outline-primary mb-4">1W</button>
+            <button type="button" v-on:click='getCurrencyGraph("1M")'
+                class="btn btn-outline-primary mb-4">1M</button>
+            <button type="button" v-on:click='getCurrencyGraph("1Y")'
+                class="btn btn-outline-primary mb-4">1Y</button>
+            <button type="button" v-on:click='getCurrencyGraph("2Y")'
+                class="btn btn-outline-primary mb-4">2Y</button>
+            <button type="button" v-on:click='getCurrencyGraph("5Y")'
+                class="btn btn-outline-primary mb-4">5Y</button>
+            <button type="button" v-on:click='getCurrencyGraph("10Y")'
+                class="btn btn-outline-primary mb-4">10Y</button>
           </div>
         </div>
       </div>
@@ -90,6 +97,8 @@
 import currenciesJson from './../../static/currencies.json';
 import Graph from './../utils/graph';
 /* eslint-env jquery */
+const API_KEY_HISTORY = 'G8DZ3D17B1TXD7RU';
+const API_KEY_CURRENT = 'L9P96TFKML5W3CYA';
 
 export default {
   name: 'Main',
@@ -103,7 +112,7 @@ export default {
     };
   },
   mounted() {
-    Graph.createSampleGraph();
+    // Graph.createSampleGraph();
     this.fetchCurrentCurrencyRate();
   },
   methods: {
@@ -122,8 +131,34 @@ export default {
     fetchCurrentCurrencyRate() {
       // fetch(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${this.pickedCurrencyFrom}&to_currency=${this.pickedCurrencyTo}&apikey=L9P96TFKML5W3CYA`)
       //   .then(response => response.json())
-      //   .then(json => this.realTimeExchangeRate = (json['Realtime Currency Exchange Rate']['5. Exchange Rate']))
+      //   .then(json => this.realTimeExchangeRate =
+                //(json['Realtime Currency Exchange Rate']['5. Exchange Rate']))
       //   .catch(err => console.log(`Error with your api call ${err}`));
+    },
+    getCurrencyGraph(interval) {
+      // TODO Change URL
+      let URL = '';
+      if(interval === '12h' || interval === '1D' || interval === '1W') {
+        let intervalTime;
+        if(interval === '12h')
+          intervalTime = '5min';
+        else if(interval === '1D')
+          intervalTime = '15min';
+        else
+          intervalTime = '60min';
+        
+        URL = `https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=EUR&to_symbol=USD&interval=5min&outputsize=full&apikey=demo`;
+      } else if(interval === '1M') {
+        URL = `https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=EUR&to_symbol=USD&outputsize=full&apikey=demo`;  
+      } else if(interval === '1Y') {
+        URL = `https://www.alphavantage.co/query?function=FX_WEEKLY&from_symbol=EUR&to_symbol=USD&apikey=demo`;
+      } else {
+        URL = `https://www.alphavantage.co/query?function=FX_MONTHLY&from_symbol=EUR&to_symbol=USD&apikey=demo`;
+      }
+      fetch(URL)
+      .then(data => data.json())
+      .then(json => Graph.createCurrencyGraph(json, interval))
+      .catch(err => console.log(`There was an error with your request.\nError: ${err}`));
     },
   },
 };

@@ -1,42 +1,85 @@
+function getDataFromJson(jsonData, interval) {
+    let chartPoints = [];
+    let chartLabels = [];
+
+    let numberOfSamples = -1;
+
+    switch(interval) {
+        case '12h':
+            numberOfSamples = 144;
+            break;
+        case '1D':
+            numberOfSamples = 96;
+            break;
+        case '1W':
+            numberOfSamples = 168;
+            break;
+        case '1M':
+            numberOfSamples = 30;
+            break;
+        case '1Y':
+            numberOfSamples = 120;
+            break;
+        case '2Y':
+            numberOfSamples = 24;
+            break;
+        case '5Y':
+            numberOfSamples = 60;
+            break;
+        case '10Y':
+            numberOfSamples = 120;
+            break;
+    }
+    
+    var keys = Object.keys( jsonData );
+    var dates = Object.keys(jsonData[keys[1]]);
+    let i = 0;
+    for(let date of dates) {
+        if(i > numberOfSamples)
+            break;
+        chartLabels.push(date);
+        chartPoints.push({x: i, y: jsonData[keys[1]][date]['4. close']});
+        i++;
+    }
+
+    return [chartPoints.reverse(), chartLabels.reverse()];
+}
+
 export default {
-    createSampleGraph() {
-        var Chart = require('chart.js');
-        var ctx = document.getElementById('currencyChart').getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'bar',
+    createCurrencyGraph(jsonData, interval) {
+        const [data, labels] = getDataFromJson(jsonData, interval); 
+        const Chart = require('chart.js');
+        const ctx = document.getElementById('currencyChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'line',
             data: {
-                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                labels,
                 datasets: [{
-                    label: '# of Votes',
-                    data: [12, 19, 3, 5, 2, 3],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
+                    backgroundColor: 'rgba(169, 169, 169, 0.2)',
+                    borderColor: 'rgb(169, 169, 169)',
+                    data,
+                }],
             },
             options: {
+                title: {
+                    display: true,
+                    position: 'bottom',
+                    text: 'Historical Exchange Chart',
+                    fontSize: '16',
+                },
+                legend: {
+                    display: false,
+                },
                 scales: {
-                    yAxes: [{
+                    xAxes: [{
+                        type: 'category',
                         ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-                }
-            }
+                            autoSkip: true,
+                            maxTicksLimit: 5,
+                        }, 
+                    }],
+                },
+            },
         });
     },
-}
+};
