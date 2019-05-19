@@ -126,6 +126,7 @@ export default {
           [this.pickedCurrencyTo, this.pickedCurrencyFrom];
       this.refreshSelects();
       this.fetchCurrentCurrencyRate();
+      this.getCurrencyGraph('12h');
     },
     refreshSelects() {
       $('#selectFrom').val(this.pickedCurrencyFrom);
@@ -134,11 +135,24 @@ export default {
       $('#selectTo').selectpicker('refresh');
     },
     fetchCurrentCurrencyRate() {
-      // fetch(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${this.pickedCurrencyFrom}&to_currency=${this.pickedCurrencyTo}&apikey=${API_KEY_CURRENT}`)
-      //   .then(response => response.json())
-      //   .then(json => this.realTimeExchangeRate =
-                //(json['Realtime Currency Exchange Rate']['5. Exchange Rate']))
-      //   .catch(err => console.log(`Error with your api call ${err}`));
+      fetch(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${this.pickedCurrencyFrom}&to_currency=${this.pickedCurrencyTo}&apikey=${API_KEY_CURRENT}`)
+        .then(response => response.json())
+        .then(json => this.realTimeExchangeRate =
+                (json['Realtime Currency Exchange Rate']['5. Exchange Rate']))
+        .catch(err => console.log(`Error with your api call ${err}`));
+    },
+    getSampleGraph() {
+      fetch(`https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=EUR&to_symbol=USD&interval=5min&outputsize=full&apikey=demo`)
+      .then(data => data.json())
+      .then(json => {
+        this.jsonData = json;
+        this.interval = '12h';
+        return Graph.createCurrencyGraph(json, this.interval, this.areTrendLinesShown);
+      })
+      .catch(err => {
+        console.log(`There was an error with your request.\nError: ${err}`);
+        
+      });
     },
     getCurrencyGraph(interval) {
       let URL = '';
@@ -150,36 +164,30 @@ export default {
           intervalTime = '15min';
         else
           intervalTime = '60min';
-        //URL = `https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=${this.pickedCurrencyFrom}&to_symbol=${this.pickedCurrencyTo}&interval=${intervalTime}&outputsize=full&apikey=${API_KEY_HISTORY}
-        URL = `https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=EUR&to_symbol=USD&interval=5min&outputsize=full&apikey=demo`;
+        URL = `https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=${this.pickedCurrencyFrom}&to_symbol=${this.pickedCurrencyTo}&interval=${intervalTime}&outputsize=full&apikey=${API_KEY_HISTORY}`;
+        // URL = `https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=EUR&to_symbol=USD&interval=5min&outputsize=full&apikey=demo`;
       } else if(interval === '1M') {
-        //URL = `https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=${this.pickedCurrencyFrom}&to_symbol=${this.pickedCurrencyTo}&outputsize=full&apikey=${API_KEY_HISTORY}
-        URL = `https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=EUR&to_symbol=USD&outputsize=full&apikey=demo`;  
+        URL = `https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=${this.pickedCurrencyFrom}&to_symbol=${this.pickedCurrencyTo}&outputsize=full&apikey=${API_KEY_HISTORY}`;
+        //URL = `https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=EUR&to_symbol=USD&outputsize=full&apikey=demo`;  
       } else if(interval === '1Y') {
-        //URL = `https://www.alphavantage.co/query?function=FX_WEEKLY&from_symbol=${this.pickedCurrencyFrom}&to_symbol=${this.pickedCurrencyTo}&apikey=${API_KEY_HISTORY}
-        URL = `https://www.alphavantage.co/query?function=FX_WEEKLY&from_symbol=EUR&to_symbol=USD&apikey=demo`;
+        URL = `https://www.alphavantage.co/query?function=FX_WEEKLY&from_symbol=${this.pickedCurrencyFrom}&to_symbol=${this.pickedCurrencyTo}&apikey=${API_KEY_HISTORY}`;
+        //URL = `https://www.alphavantage.co/query?function=FX_WEEKLY&from_symbol=EUR&to_symbol=USD&apikey=demo`;
       } else {
-        //URL = `https://www.alphavantage.co/query?function=FX_MONTHLY&from_symbol=${this.pickedCurrencyFrom}&to_symbol=${this.pickedCurrencyTo}&apikey=${API_KEY_HISTORY}
-        URL = `https://www.alphavantage.co/query?function=FX_MONTHLY&from_symbol=EUR&to_symbol=USD&apikey=demo`;
+        URL = `https://www.alphavantage.co/query?function=FX_MONTHLY&from_symbol=${this.pickedCurrencyFrom}&to_symbol=${this.pickedCurrencyTo}&apikey=${API_KEY_HISTORY}`;
+        //URL = `https://www.alphavantage.co/query?function=FX_MONTHLY&from_symbol=EUR&to_symbol=USD&apikey=demo`;
       }
       fetch(URL)
       .then(data => data.json())
       .then(json => {
+        console.log(json);
         this.jsonData = json;
         this.interval = interval;
         return Graph.createCurrencyGraph(json, interval, this.areTrendLinesShown);
       })
-      .catch(err => console.log(`There was an error with your request.\nError: ${err}`));
-    },
-    getSampleGraph() {
-      fetch(`https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=EUR&to_symbol=USD&interval=5min&outputsize=full&apikey=demo`)
-      .then(data => data.json())
-      .then(json => {
-        this.jsonData = json;
-        this.interval = '12h';
-        return Graph.createCurrencyGraph(json, this.interval, this.areTrendLinesShown);
-      })
-      .catch(err => console.log(`There was an error with your request.\nError: ${err}`));
+      .catch(err => {
+        console.log(`There was an error with your request.\nError: ${err}`);
+        this.getSampleGraph();
+      });
     },
   },
 };
