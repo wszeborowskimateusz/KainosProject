@@ -4,7 +4,6 @@ function countTrendLine(pointsData, firstPointLabelIndex, lastPointLabelIndex, d
     const firstPoint = pointsData[0];
     const lastPoint = pointsData[pointsData.length - 1];
     let data = [];
-    console.log(`first: ${firstPointLabelIndex} last: ${lastPointLabelIndex}`);
     for(let i = 0; i < dataLength; i++) {
         if(i === firstPointLabelIndex)
             data.push(firstPoint);
@@ -93,105 +92,66 @@ function getDataFromJson(jsonData, interval) {
 }
 
 export default {
+    myChart: null,
     createCurrencyGraph(jsonData, interval, trendLines) {
         const [data, labels] = getDataFromJson(jsonData, interval); 
         const Chart = require('chart.js');
         const ctx = document.getElementById('currencyChart').getContext('2d');
-        const myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels,
-                datasets: [{
-                    backgroundColor: 'rgba(169, 169, 169, 0.2)',
-                    borderColor: 'rgb(169, 169, 169)',
-                    data,
-                }],
-            },
-            options: {
-                responsive: false,
-                annotation: {
-                    annotations: [],
-                },
-                title: {
-                    display: true,
-                    position: 'bottom',
-                    text: 'Historical Exchange Chart',
-                    fontSize: '16',
-                },
-                legend: {
-                    display: false,
-                },
-                scales: {
-                    xAxes: [{
-                        type: 'category',
-                        ticks: {
-                            autoSkip: true,
-                            maxTicksLimit: 5,
-                        }, 
+            
+        if(!this.myChart) {
+            this.myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        backgroundColor: 'rgba(169, 169, 169, 0.2)',
+                        borderColor: 'rgb(169, 169, 169)',
+                        data,
                     }],
                 },
-            },
-        });
- 
-        // var data = {
-        //     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        //     datasets: [{
-        //         label: "Stock A",
-        //         fill: false,
-        //         lineTension: 0.1,
-        //         backgroundColor: "rgba(225,0,0,0.4)",
-        //         borderColor: "red", // The main line color
-        //         borderCapStyle: 'square',
-        //         borderDash: [], // try [5, 15] for instance
-        //         borderDashOffset: 0.0,
-        //         borderJoinStyle: 'miter',
-        //         pointBorderColor: "black",
-        //         pointBackgroundColor: "white",
-        //         pointBorderWidth: 1,
-        //         pointHoverRadius: 8,
-        //         pointHoverBackgroundColor: "yellow",
-        //         pointHoverBorderColor: "brown",
-        //         pointHoverBorderWidth: 2,
-        //         pointRadius: 4,
-        //         pointHitRadius: 10,
-        //         // notice the gap in the data and the spanGaps: true
-        //         data: [65, 59, 80, 81, 56, 55, 40, ,60,55,30,78],
-        //         spanGaps: true,
-        //       }, {
-        //         label: "Stock B",
-        //         fill: true,
-        //         lineTension: 0.1,
-        //         backgroundColor: "rgba(167,105,0,0.4)",
-        //         borderColor: "rgb(167, 105, 0)",
-        //         borderCapStyle: 'butt',
-        //         borderDash: [],
-        //         borderDashOffset: 0.0,
-        //         borderJoinStyle: 'miter',
-        //         pointBorderColor: "white",
-        //         pointBackgroundColor: "black",
-        //         pointBorderWidth: 1,
-        //         pointHoverRadius: 8,
-        //         pointHoverBackgroundColor: "brown",
-        //         pointHoverBorderColor: "yellow",
-        //         pointHoverBorderWidth: 2,
-        //         pointRadius: 4,
-        //         pointHitRadius: 10,
-        //         // notice the gap in the data and the spanGaps: false
-        //         data: [10, 20, 60, 95, 64, 78, 90,,70,40,70,89],
-        //         spanGaps: false,
-        //       }
-          
-        //     ]
-        //   };
-          
-
+                options: {
+                    tooltips: {enabled: false},
+                    hover: {mode: null},
+                    responsive: false,
+                    annotation: {
+                        annotations: [],
+                    },
+                    title: {
+                        display: true,
+                        position: 'bottom',
+                        text: 'Historical Exchange Chart',
+                        fontSize: '16',
+                    },
+                    legend: {
+                        display: false,
+                    },
+                    scales: {
+                        xAxes: [{
+                            type: 'category',
+                            ticks: {
+                                autoSkip: true,
+                                maxTicksLimit: 5,
+                            }, 
+                        }],
+                    },
+                },
+            });
+    
+        } else {
+            this.myChart.data.labels = labels;
+            this.myChart.data.datasets = [{
+                backgroundColor: 'rgba(169, 169, 169, 0.2)',
+                borderColor: 'rgb(169, 169, 169)',
+                data,
+            }];
+        }
+        
         if(trendLines) {
             let trendLinesData = countTrendLines(data, 5);
-            console.log(trendLinesData);
             for(let trendLine of trendLinesData){
-                myChart.data.datasets.push(trendLine);              
+                this.myChart.data.datasets.push(trendLine);              
             }
-            myChart.update();
         }
+        this.myChart.update();
     },
 };
