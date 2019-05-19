@@ -141,7 +141,6 @@ export default {
       //   .catch(err => console.log(`Error with your api call ${err}`));
     },
     getCurrencyGraph(interval) {
-      // TODO Change URL
       let URL = '';
       if(interval === '12h' || interval === '1D' || interval === '1W') {
         let intervalTime;
@@ -151,13 +150,16 @@ export default {
           intervalTime = '15min';
         else
           intervalTime = '60min';
-        
+        //URL = `https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=${this.pickedCurrencyFrom}&to_symbol=${this.pickedCurrencyTo}&interval=${intervalTime}&outputsize=full&apikey=${API_KEY_HISTORY}
         URL = `https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=EUR&to_symbol=USD&interval=5min&outputsize=full&apikey=demo`;
       } else if(interval === '1M') {
+        //URL = `https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=${this.pickedCurrencyFrom}&to_symbol=${this.pickedCurrencyTo}&outputsize=full&apikey=${API_KEY_HISTORY}
         URL = `https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=EUR&to_symbol=USD&outputsize=full&apikey=demo`;  
       } else if(interval === '1Y') {
+        //URL = `https://www.alphavantage.co/query?function=FX_WEEKLY&from_symbol=${this.pickedCurrencyFrom}&to_symbol=${this.pickedCurrencyTo}&apikey=${API_KEY_HISTORY}
         URL = `https://www.alphavantage.co/query?function=FX_WEEKLY&from_symbol=EUR&to_symbol=USD&apikey=demo`;
       } else {
+        //URL = `https://www.alphavantage.co/query?function=FX_MONTHLY&from_symbol=${this.pickedCurrencyFrom}&to_symbol=${this.pickedCurrencyTo}&apikey=${API_KEY_HISTORY}
         URL = `https://www.alphavantage.co/query?function=FX_MONTHLY&from_symbol=EUR&to_symbol=USD&apikey=demo`;
       }
       fetch(URL)
@@ -191,5 +193,8 @@ export default {
 canvas {
   width: 93.3%;
   height: auto;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 </style>
