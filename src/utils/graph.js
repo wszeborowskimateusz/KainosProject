@@ -110,8 +110,6 @@ export default {
                     }],
                 },
                 options: {
-                    tooltips: {enabled: false},
-                    hover: {mode: null},
                     responsive: false,
                     annotation: {
                         annotations: [],
