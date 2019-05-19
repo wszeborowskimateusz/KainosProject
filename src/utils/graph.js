@@ -1,3 +1,46 @@
+import 'chartjs-plugin-annotation';
+
+function countTrendLine(data) {
+    const firstPoint = data[0];
+    const lastPoint = data[data.length - 1];
+
+    if(lastPoint.y > firstPoint.y)
+        return {
+            drawTime: 'afterDraw', // overrides annotation.drawTime if set
+            type: 'line',
+            mode: 'horizontal',
+            scaleID: 'y-axis-0',
+            value: firstPoint.y,
+            endValue: lastPoint.y,
+            borderColor: 'green',
+            borderWidth: 2,
+        };
+    else {
+        return {
+            drawTime: 'afterDraw', // overrides annotation.drawTime if set
+            type: 'line',
+            mode: 'horizontal',
+            scaleID: 'y-axis-0',
+            value: firstPoint.y,
+            endValue: lastPoint.y,
+            borderColor: 'red',
+            borderWidth: 2,
+        };
+    }
+}
+
+function countTrendLines(data, ammountOfTrendLines) {
+    let trendLines = [];
+    let lastIndex = 0;
+    const dataLength = data.length;
+    const numberOfPointsPerTrendLine = dataLength / ammountOfTrendLines;
+    for(let i = 0; i < ammountOfTrendLines; i++) {
+        trendLines.push(countTrendLine(data.slice(lastIndex, lastIndex + numberOfPointsPerTrendLine)));
+        lastIndex += numberOfPointsPerTrendLine;
+    }
+    return trendLines;
+}
+
 function getDataFromJson(jsonData, interval) {
     let chartPoints = [];
     let chartLabels = [];
@@ -46,7 +89,7 @@ function getDataFromJson(jsonData, interval) {
 }
 
 export default {
-    createCurrencyGraph(jsonData, interval) {
+    createCurrencyGraph(jsonData, interval, trendLines) {
         const [data, labels] = getDataFromJson(jsonData, interval); 
         const Chart = require('chart.js');
         const ctx = document.getElementById('currencyChart').getContext('2d');
@@ -61,6 +104,9 @@ export default {
                 }],
             },
             options: {
+                annotation: {
+                    annotations: [],
+                },
                 title: {
                     display: true,
                     position: 'bottom',
@@ -81,5 +127,13 @@ export default {
                 },
             },
         });
+ 
+        if(trendLines) {
+            let trendLinesData = countTrendLines(data, 5);
+            for(let trendLine of trendLinesData){
+                myChart.options.annotation.annotations.push(trendLine);              
+            }
+            myChart.update();
+        }
     },
 };

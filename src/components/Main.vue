@@ -27,16 +27,15 @@
         </div>
         <div class="col-5 mb-3 mr-3 border rounded border-secondary container">
           <div class="row">
-            <div class="col">
-              <div class="form-check p-1">
-                <label>
-                  Trend Line
-                </label>
-                <input type="checkbox" data-onstyle="success" data-offstyle="danger"
-                      checked data-toggle="toggle" v-model="areTrendLinesShown">
+            <div class="col mt-4">
+              <div class="pretty p-switch p-fill">
+                <input type="checkbox" @change="handleChange()" v-model="areTrendLinesShown"/>
+                <div class="state">
+                    <label>Trend lines</label>
+                </div>
               </div>
             </div>
-            <div class="col-8 p-2">
+            <div class="col-7 p-2">
               <div class="controls readonly-display">
                 <ul class="list-unstyled">
                   <li><span class="font-weight-light small">Real time exchange rate</span></li>
@@ -100,22 +99,28 @@ import Graph from './../utils/graph';
 const API_KEY_HISTORY = 'G8DZ3D17B1TXD7RU';
 const API_KEY_CURRENT = 'L9P96TFKML5W3CYA';
 
+
 export default {
   name: 'Main',
   data() {
     return {
       realTimeExchangeRate: 0.259754,
-      pickedCurrencyFrom: 'PLN',
+      pickedCurrencyFrom: 'EUR',
       pickedCurrencyTo: 'USD',
       currencies: currenciesJson,
       areTrendLinesShown: true,
+      jsonData: 0,
+      interval: '12h'
     };
   },
   mounted() {
-    // Graph.createSampleGraph();
+    this.getSampleGraph();
     this.fetchCurrentCurrencyRate();
   },
   methods: {
+    handleChange(e) {
+      Graph.createCurrencyGraph(this.jsonData, this.interval, this.areTrendLinesShown);
+    },
     swapCurrencies() {
       [this.pickedCurrencyFrom, this.pickedCurrencyTo] =
           [this.pickedCurrencyTo, this.pickedCurrencyFrom];
@@ -129,7 +134,7 @@ export default {
       $('#selectTo').selectpicker('refresh');
     },
     fetchCurrentCurrencyRate() {
-      // fetch(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${this.pickedCurrencyFrom}&to_currency=${this.pickedCurrencyTo}&apikey=L9P96TFKML5W3CYA`)
+      // fetch(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${this.pickedCurrencyFrom}&to_currency=${this.pickedCurrencyTo}&apikey=${API_KEY_CURRENT}`)
       //   .then(response => response.json())
       //   .then(json => this.realTimeExchangeRate =
                 //(json['Realtime Currency Exchange Rate']['5. Exchange Rate']))
@@ -157,7 +162,21 @@ export default {
       }
       fetch(URL)
       .then(data => data.json())
-      .then(json => Graph.createCurrencyGraph(json, interval))
+      .then(json => {
+        this.jsonData = json;
+        this.interval = interval;
+        return Graph.createCurrencyGraph(json, interval, this.areTrendLinesShown);
+      })
+      .catch(err => console.log(`There was an error with your request.\nError: ${err}`));
+    },
+    getSampleGraph() {
+      fetch(`https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=EUR&to_symbol=USD&interval=5min&outputsize=full&apikey=demo`)
+      .then(data => data.json())
+      .then(json => {
+        this.jsonData = json;
+        this.interval = '12h';
+        return Graph.createCurrencyGraph(json, this.interval, this.areTrendLinesShown);
+      })
       .catch(err => console.log(`There was an error with your request.\nError: ${err}`));
     },
   },
