@@ -5,7 +5,7 @@
       <div class="row">
         <div class="col">
           <span class="font-weight-bold pr-1 bigFont" >From</span>
-          <select id="selectFrom" @change="fetchCurrentCurrencyRate()" 
+          <select id="selectFrom" @change="fetchCurrentCurrencyRate()"
                 v-model="pickedCurrencyFrom" class="selectpicker" data-width="50%"
                 data-live-search="true" data-style="btn-primary" data-size="4">
             <option value="" disabled selected>Select</option>
@@ -16,7 +16,7 @@
         </div>
         <div class="col">
           <span class="font-weight-bold pr-1 bigFont">to</span>
-          <select id="selectTo" @change="fetchCurrentCurrencyRate()" 
+          <select id="selectTo" @change="fetchCurrentCurrencyRate()"
                 v-model="pickedCurrencyTo" class="selectpicker" data-width="50%"
                 data-live-search="true" data-style="btn-primary" data-size="4">
             <option value="" disabled selected>Select</option>
@@ -64,23 +64,21 @@
       <div class="row">
         <div class="col-11">
           <div class="graph border border-secondary ">
-            
             <canvas id="currencyChart" class="border  border-primary">
             </canvas>
-            
             <p class="text-center m-2">Historical Exchange Chart</p>
           </div>
         </div>
         <div class="col">
           <div class="btn-group-vertical float-right" role="group" aria-label="Basic example">
-            <button type="button" class="btn btn-secondary mb-4 mr-2">12h</button>
-            <button type="button" class="btn btn-secondary mb-4">1D</button>
-            <button type="button" class="btn btn-secondary mb-4">1W</button>
-            <button type="button" class="btn btn-secondary mb-4">1M</button>
-            <button type="button" class="btn btn-secondary mb-4">1Y</button>
-            <button type="button" class="btn btn-secondary mb-4">2Y</button>
-            <button type="button" class="btn btn-secondary mb-4">5Y</button>
-            <button type="button" class="btn btn-secondary mb-4">10Y</button>
+            <button type="button" class="btn btn-outline-primary mb-4 mr-2">12h</button>
+            <button type="button" class="btn btn-outline-primary mb-4">1D</button>
+            <button type="button" class="btn btn-outline-primary mb-4">1W</button>
+            <button type="button" class="btn btn-outline-primary mb-4">1M</button>
+            <button type="button" class="btn btn-outline-primary mb-4">1Y</button>
+            <button type="button" class="btn btn-outline-primary mb-4">2Y</button>
+            <button type="button" class="btn btn-outline-primary mb-4">5Y</button>
+            <button type="button" class="btn btn-outline-primary mb-4">10Y</button>
           </div>
         </div>
       </div>
@@ -139,9 +137,5 @@ export default {
 canvas {
   width: 93.3%;
   height: auto;
-}
-.right {
-  position: absolute;
-  right: 0em;
 }
 </style>
