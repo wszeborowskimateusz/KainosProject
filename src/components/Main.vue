@@ -142,11 +142,13 @@ export default {
         .catch(err => console.log(`Error with your api call ${err}`));
     },
     getSampleGraph() {
-      fetch(`https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=EUR&to_symbol=USD&interval=5min&outputsize=full&apikey=demo`)
+      //fetch(`https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=EUR&to_symbol=USD&interval=5min&outputsize=full&apikey=demo`)
+      fetch(`https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=EUR&to_symbol=USD&outputsize=full&apikey=demo`)
       .then(data => data.json())
       .then(json => {
         this.jsonData = json;
-        this.interval = '12h';
+        this.interval = '1D';
+        console.log(json);
         return Graph.createCurrencyGraph(json, this.interval, this.areTrendLinesShown);
       })
       .catch(err => {

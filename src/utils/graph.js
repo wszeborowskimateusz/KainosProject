@@ -85,6 +85,7 @@ function getDataFromJson(jsonData, interval) {
             break;
         chartLabels.push(date);
         chartPoints.push({x: i, y: jsonData[keys[1]][date]['4. close']});
+        
         i++;
     }
 
@@ -97,7 +98,6 @@ export default {
         const [data, labels] = getDataFromJson(jsonData, interval); 
         const Chart = require('chart.js');
         const ctx = document.getElementById('currencyChart').getContext('2d');
-            
         if(!this.myChart) {
             this.myChart = new Chart(ctx, {
                 type: 'line',
